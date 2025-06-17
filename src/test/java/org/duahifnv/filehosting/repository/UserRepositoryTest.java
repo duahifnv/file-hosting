@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Тестирование репозитория пользователей")
 class UserRepositoryTest {
     @Autowired
-    private UserRepository userRepository;
+    private UserRepositoryImpl userRepository;
 
     @Autowired
     private TestEntityManager entityManager;
