@@ -4,8 +4,15 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+### Environment ###
+.env
+.env.*
+
 ### Git ###
 .gitattributes
+
+### Draw.io ###
+*.drawio
 
 ### STS ###
 .apt_generated
