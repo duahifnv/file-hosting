@@ -1,3 +1,21 @@
 spring:
+  config:
+    import: "file:.env[.properties]"
+
   application:
-    name: file-hosting
+    name: ${app.name} - ${app.version} - ${app.release-stage}
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+app:
+  name: "@project.name@"
+  version: "@project.version@"
+  release-stage: development
