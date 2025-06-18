@@ -7,8 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.duahifnv.filehosting.model.User;
-import org.duahifnv.jwtauthstarter.auth.UserService;
+import org.duahifnv.filehosting.service.UserService;
 import org.duahifnv.jwtauthstarter.jwt.JwtService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,14 +16,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class AuthFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
     private final JwtService jwtService;
-    private final UserService<User, UUID> userService;
+    private final UserService userService;
 
     @Override
     public void doFilterInternal(@NonNull HttpServletRequest request,

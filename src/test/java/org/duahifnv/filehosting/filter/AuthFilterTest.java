@@ -3,7 +3,7 @@ package org.duahifnv.filehosting.filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import org.duahifnv.filehosting.model.User;
-import org.duahifnv.jwtauthstarter.auth.UserService;
+import org.duahifnv.filehosting.service.UserService;
 import org.duahifnv.jwtauthstarter.jwt.JwtService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -16,10 +16,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,7 +34,7 @@ class AuthFilterTest {
     private JwtService jwtService;
 
     @Mock
-    private UserService<UserDetails, UUID> userService;
+    private UserService userService;
 
     @Mock
     private FilterChain filterChain;
