@@ -8,3 +8,17 @@ CREATE TABLE users
 
 ALTER TABLE users
     ADD CONSTRAINT uc_users_username UNIQUE (username);
+
+CREATE TABLE file_metadata (
+   id UUID PRIMARY KEY,
+   user_id UUID NOT NULL REFERENCES users(id),
+   original_name VARCHAR(255) NOT NULL,
+   content_type VARCHAR(100),
+   size BIGINT NOT NULL,
+   bucket VARCHAR(50) NOT NULL,
+   object_path VARCHAR(500) NOT NULL,
+   encryption_key BYTEA NOT NULL,
+   iv BYTEA NOT NULL,
+   created_at TIMESTAMPTZ NOT NULL,
+   expires_at TIMESTAMPTZ
+);
