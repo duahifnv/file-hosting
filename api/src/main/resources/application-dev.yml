@@ -1,4 +1,7 @@
 spring:
+  config:
+      import: "file:.env[.properties]"
+
   main:
     allow-bean-definition-overriding: true
 
@@ -28,3 +31,6 @@ logging:
 
 jwt:
   public-secret-key: QTE/eGAaVqV9dvnmTIjlvz07JyBBMB4dDaR9sp9T/OA=
+
+minio:
+  endpoint: http://localhost:${MINIO_PORT}

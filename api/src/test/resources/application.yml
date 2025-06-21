@@ -16,3 +16,6 @@ spring:
 
   flyway:
     enabled: false
+
+jwt:
+  public-secret-key: QTE/eGAaVqV9dvnmTIjlvz07JyBBMB4dDaR9sp9T/OA=

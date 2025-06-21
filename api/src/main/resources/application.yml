@@ -13,3 +13,8 @@ server:
 jwt:
   public-secret-key: ${JWT_SECRET}
   token-lifetime: 86400s # 24 часа
+
+minio:
+  endpoint: http://${MINIO_HOST}:${MINIO_PORT}
+  access-key: ${MINIO_ROOT_USER}
+  secret-key: ${MINIO_ROOT_PASSWORD}
