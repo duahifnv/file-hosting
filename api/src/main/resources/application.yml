@@ -19,3 +19,7 @@ app:
   name: "@project.name@"
   version: "@project.version@"
   release-stage: development
+
+server:
+  error:
+    include-message: always

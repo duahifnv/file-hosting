@@ -5,8 +5,19 @@ import org.duahifnv.jwtauthstarter.dto.AbstractUserDto;
 import org.hibernate.validator.constraints.Length;
 
 public class UserDto extends AbstractUserDto {
-    public UserDto(@NotBlank @Length(min = 6) String username,
-                   @NotBlank @Length(min = 6) String password) {
+    public UserDto(String username, String password) {
         super(username, password);
+    }
+
+    @NotBlank(message = "Имя пользователя не может быть пустым")
+    @Length(min = 4, message = "Длина имени от 4 символов")
+    public String getUsername() {
+        return super.getUsername();
+    }
+
+    @NotBlank(message = "Пароль не может быть пустым")
+    @Length(min = 6, message = "Длина пароля от 6 символов")
+    public String getPassword() {
+        return super.getPassword();
     }
 }
