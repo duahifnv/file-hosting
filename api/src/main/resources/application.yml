@@ -1,25 +1,15 @@
 spring:
-  config:
-    import: "file:.env[.properties]"
-
   application:
     name: ${app.name} - ${app.version} - ${app.release-stage}
-
-  datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
 
 app:
   name: "@project.name@"
   version: "@project.version@"
-  release-stage: development
 
 server:
   error:
     include-message: always
+
+jwt:
+  public-secret-key: ${JWT_SECRET}
+  token-lifetime: 86400s # 24 часа
