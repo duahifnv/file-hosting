@@ -97,7 +97,7 @@ class AuthControllerTest {
         mvc.perform(post("/api/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(mapper.writeValueAsString(userDto)))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.token").value("token"));
 
         // then
