@@ -101,9 +101,10 @@ class FileServiceTest {
         when(metaService.findById(fileId, user)).thenReturn(Optional.of(fileMeta));
 
         // when
-        fileService.removeFile(fileId, user);
+        boolean isRemoved = fileService.removeFile(fileId, user);
 
         // then
+        assertThat(isRemoved).isTrue();
         verify(minioService, times(1)).removeObject(fileMeta);
         verify(metaService, times(1)).remove(fileMeta);
     }
@@ -115,9 +116,10 @@ class FileServiceTest {
         when(metaService.findById(fileId, user)).thenReturn(Optional.empty());
 
         // when
-        fileService.removeFile(fileId, user);
+        boolean isRemoved = fileService.removeFile(fileId, user);
 
         // then
+        assertThat(isRemoved).isFalse();
         verify(minioService, never()).removeObject(any(FileMeta.class));
         verify(metaService, never()).remove(any(FileMeta.class));
     }

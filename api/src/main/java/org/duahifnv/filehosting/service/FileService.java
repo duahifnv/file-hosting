@@ -42,12 +42,13 @@ public class FileService {
     }
 
     @Transactional
-    public void removeFile(UUID id, User user) throws Exception {
+    public boolean removeFile(UUID id, User user) throws Exception {
         Optional<FileMeta> metaOptional = metaService.findById(id, user);
-
-        if (metaOptional.isPresent()) {
-            minioService.removeObject(metaOptional.get());
-            metaService.remove(metaOptional.get());
+        if (metaOptional.isEmpty()) {
+            return false;
         }
+        minioService.removeObject(metaOptional.get());
+        metaService.remove(metaOptional.get());
+        return true;
     }
 }
