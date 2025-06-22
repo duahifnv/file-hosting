@@ -3,6 +3,7 @@ package org.duahifnv.filehosting.service;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import org.duahifnv.filehosting.model.FileMeta;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,5 +40,15 @@ public class MinioService {
                 .object(metaData.getObjectPath())
                 .build()
         ).readAllBytes();
+    }
+
+    @Transactional
+    public void removeObject(FileMeta fileMeta) throws Exception {
+        minioClient.removeObject(
+                RemoveObjectArgs.builder()
+                    .bucket(fileMeta.getBucket())
+                    .object(fileMeta.getObjectPath())
+                    .build()
+        );
     }
 }

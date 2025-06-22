@@ -1,9 +1,6 @@
 package org.duahifnv.filehosting.service;
 
-import io.minio.GetObjectArgs;
-import io.minio.GetObjectResponse;
-import io.minio.MinioClient;
-import io.minio.PutObjectArgs;
+import io.minio.*;
 import org.duahifnv.filehosting.model.FileMeta;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -62,5 +59,20 @@ public class MinioServiceTest {
         // then
         assertThat(result).isEqualTo(fileBytes);
         verify(minioClient, times(1)).getObject(any(GetObjectArgs.class));
+    }
+
+    @Test
+    public void removeObject_shouldCallMinioClient() throws Exception {
+        // given
+        var fileMeta = mock(FileMeta.class);
+
+        when(fileMeta.getBucket()).thenReturn("test-bucket");
+        when(fileMeta.getObjectPath()).thenReturn("test-object");
+
+        // when
+        minioService.removeObject(fileMeta);
+
+        // then
+        verify(minioClient, times(1)).removeObject(any(RemoveObjectArgs.class));
     }
 }
