@@ -42,4 +42,9 @@ public class FileMetaService {
     public void remove(UUID id, @NotNull User user) {
         findById(id, user).ifPresent(repository::delete);
     }
+
+    @Transactional
+    public void remove(FileMeta meta) {
+        repository.delete(meta);
+    }
 }
