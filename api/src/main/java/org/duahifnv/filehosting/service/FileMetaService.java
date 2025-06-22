@@ -1,14 +1,13 @@
 package org.duahifnv.filehosting.service;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.duahifnv.exceptions.ResourceNotFoundException;
 import org.duahifnv.filehosting.model.FileMeta;
 import org.duahifnv.filehosting.model.User;
 import org.duahifnv.filehosting.repository.FileMetaRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,9 +40,6 @@ public class FileMetaService {
 
     @Transactional
     public void remove(UUID id, @NotNull User user) {
-        FileMeta fileMeta = repository.findById(id)
-                .map(f -> f.getUser().equals(user) ? f : null)
-                .orElseThrow(ResourceNotFoundException::new);
-        repository.delete(fileMeta);
+        findById(id, user).ifPresent(repository::delete);
     }
 }

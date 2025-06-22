@@ -1,6 +1,5 @@
 package org.duahifnv.filehosting.service;
 
-import org.duahifnv.exceptions.ResourceNotFoundException;
 import org.duahifnv.filehosting.model.FileMeta;
 import org.duahifnv.filehosting.model.User;
 import org.duahifnv.filehosting.repository.FileMetaRepository;
@@ -20,7 +19,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -160,24 +158,28 @@ class FileMetaServiceTest {
     }
 
     @Test
-    void remove_WhenFileExistsButBelongsToOtherUser_ShouldThrowResourceNotFoundException() {
+    void remove_WhenFileExistsButBelongsToOtherUser_ShouldDoNothing() {
+        // when
         when(fileMetaRepository.findById(testFileId)).thenReturn(Optional.of(otherUserFileMeta));
         when(otherUserFileMeta.getUser()).thenReturn(otherUser);
 
-        assertThatThrownBy(() -> fileMetaService.remove(testFileId, testUser))
-                .isInstanceOf(ResourceNotFoundException.class);
+        // given
+        fileMetaService.remove(testFileId, testUser);
 
+        // then
         verify(fileMetaRepository).findById(testFileId);
         verify(fileMetaRepository, never()).delete(any());
     }
 
     @Test
-    void remove_WhenFileDoesNotExist_ShouldThrowResourceNotFoundException() {
+    void remove_WhenFileDoesNotExist_ShouldDoNothing() {
+        // when
         when(fileMetaRepository.findById(testFileId)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> fileMetaService.remove(testFileId, testUser))
-                .isInstanceOf(ResourceNotFoundException.class);
+        // given
+        fileMetaService.remove(testFileId, testUser);
 
+        // then
         verify(fileMetaRepository).findById(testFileId);
         verify(fileMetaRepository, never()).delete(any());
     }
