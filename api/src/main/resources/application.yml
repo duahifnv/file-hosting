@@ -2,6 +2,11 @@ spring:
   application:
     name: ${app.name} - ${app.version} - ${app.release-stage}
 
+  servlet:
+    multipart:
+      max-file-size: 1GB
+      max-request-size: 1GB
+
 app:
   name: "@project.name@"
   version: "@project.version@"
@@ -15,6 +20,16 @@ jwt:
   token-lifetime: 86400s # 24 часа
 
 minio:
-  endpoint: http://${MINIO_HOST}:${MINIO_PORT}
+  endpoint-uri: http://${MINIO_HOST:localhost}:${MINIO_PORT}
   access-key: ${MINIO_ROOT_USER}
   secret-key: ${MINIO_ROOT_PASSWORD}
+  init-bucket-name: ${MINIO_INIT_BUCKET}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+  api-docs:
+    path: /api-docs
+
+file:
+  lifetime: 30m
