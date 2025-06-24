@@ -1,0 +1,16 @@
+spring:
+  config:
+    import: "file:.env.prod[.properties]"
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+app:
+  release-stage: production
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false

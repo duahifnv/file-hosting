@@ -1,0 +1,24 @@
+spring:
+  config:
+    import: "file:.env.dev[.properties]"
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  flyway:
+    locations: classpath:db/migration, classpath:db/migration/dev
+    clean-disabled: false
+
+app:
+  release-stage: development
+
+logging:
+  level:
+    root: INFO
+    org.duahifnv.filehosting: DEBUG
+    org.duahifnv.errorwebhandlerstarter: DEBUG
+
+jwt:
+  public-secret-key: QTE/eGAaVqV9dvnmTIjlvz07JyBBMB4dDaR9sp9T/OA=

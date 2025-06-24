@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: APPLICATION - TESTING
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: test
+    password:
+
+  jpa:
+    generate-ddl: true
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+
+  flyway:
+    enabled: false
+
+jwt:
+  public-secret-key: QTE/eGAaVqV9dvnmTIjlvz07JyBBMB4dDaR9sp9T/OA=
+  token-lifetime: 86400s
+
+minio:
+  endpoint-uri: http://localhost:9000
+  access-key: stub-key
+  secret-key: stub-secret
+  init-bucket-name: stub-bucket
+
+file:
+  lifetime: 30m

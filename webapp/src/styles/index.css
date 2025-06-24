@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Ваши кастомные стили */
+.neumorphic-light {
+    background: #E0E5EC;
+    box-shadow: 8px 8px 16px #d1d9e6, -8px -8px 16px #ffffff;
+}
+
+.neumorphic-dark {
+    background: #2D3748;
+    box-shadow: 8px 8px 16px #1a202c, -8px -8px 16px #2d3748;
+}
+
+.neumorphic-input-light {
+    box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
+}
+
+.neumorphic-input-dark {
+    box-shadow: inset 4px 4px 8px #1a202c, inset -4px -4px 8px #2d3748;
+}
