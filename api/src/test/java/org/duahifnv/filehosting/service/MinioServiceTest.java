@@ -28,7 +28,6 @@ public class MinioServiceTest {
 
         when(fileMeta.getBucket()).thenReturn("test-bucket");
         when(fileMeta.getObjectPath()).thenReturn("test-object");
-        when(fileMeta.getSize()).thenReturn(10L);
         when(fileMeta.getContentType()).thenReturn("text/plain");
 
         when(minioClient.putObject(any(PutObjectArgs.class))).thenReturn(null);

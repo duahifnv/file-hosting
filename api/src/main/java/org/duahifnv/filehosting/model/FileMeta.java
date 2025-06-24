@@ -37,8 +37,8 @@ public class FileMeta {
     private String contentType;
 
     @NotNull
-    @Column(name = "size", nullable = false)
-    private Long size;
+    @Column(name = "original_size", nullable = false)
+    private Long originalSize;
 
     @Size(max = 50)
     @NotNull
@@ -70,7 +70,7 @@ public class FileMeta {
         fileMeta.setUser(user);
         fileMeta.setOriginalName(file.getOriginalFilename());
         fileMeta.setContentType(file.getContentType());
-        fileMeta.setSize(file.getSize());
+        fileMeta.setOriginalSize(file.getSize());
         fileMeta.setBucket(bucketName);
         fileMeta.setObjectPath("user-%s/%s.enc".formatted(user.getId(), UUID.randomUUID()));
         fileMeta.setEncryptionKey(cryptoData.secretKey());

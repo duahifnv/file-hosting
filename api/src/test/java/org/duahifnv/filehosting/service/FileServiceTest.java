@@ -1,8 +1,11 @@
 package org.duahifnv.filehosting.service;
 
+import org.duahifnv.filehosting.config.properties.MinioProperties;
+import org.duahifnv.filehosting.dto.FileData;
 import org.duahifnv.filehosting.model.CryptoData;
 import org.duahifnv.filehosting.model.FileMeta;
 import org.duahifnv.filehosting.model.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +35,8 @@ class FileServiceTest {
     private FileCryptoService cryptoService;
     @Mock
     private MinioService minioService;
+    @Mock
+    private MinioProperties minioProperties;
 
     @Test
     void downloadFile_shouldReturnFileBytes_withExistingFile() throws Exception {
@@ -39,12 +44,12 @@ class FileServiceTest {
         var user = mock(User.class);
 
         var fileMeta = mock(FileMeta.class);
-
         when(metaService.findById(fileId, user)).thenReturn(Optional.of(fileMeta));
         when(minioService.downloadObject(fileMeta)).thenReturn(testBytes);
 
-        var decryptedBytes = testBytes;
-        when(cryptoService.decryptData(any(CryptoData.class))).thenReturn(decryptedBytes);
+        when(cryptoService.decryptData(any(CryptoData.class))).thenReturn(testBytes);
+
+        var fileData = new FileData(fileMeta, testBytes);
 
         // when
         var result = fileService.downloadFile(fileId, user);
@@ -53,7 +58,7 @@ class FileServiceTest {
         verify(metaService).findById(fileId, user);
         verify(minioService).downloadObject(fileMeta);
         verify(cryptoService).decryptData(any(CryptoData.class));
-        assertThat(result).isPresent().hasValue(decryptedBytes);
+        assertThat(result).isPresent().hasValue(fileData);
     }
 
     @Test
@@ -78,17 +83,25 @@ class FileServiceTest {
 
         when(file.getInputStream()).thenReturn(fileStream);
 
+        when(minioProperties.getInitBucketName()).thenReturn("init-bucket");
+
         var cryptoData = mock(CryptoData.class);
         when(cryptoData.bytes()).thenReturn(testBytes);
 
         when(cryptoService.encryptStream(fileStream)).thenReturn(cryptoData);
-
         var user = mock(User.class);
 
+        var fileMetaId = UUID.fromString("285188a1-aba2-48f9-8143-34f893223949");
+        var fileMeta = mock(FileMeta.class);
+        when(fileMeta.getId()).thenReturn(fileMetaId);
+
+        when(metaService.save(any(FileMeta.class))).thenReturn(fileMeta);
+
         // when
-        fileService.uploadFile(file, user);
+        var actualFileId = fileService.uploadFile(file, user);
 
         // then
+        assertThat(actualFileId).isEqualTo(fileMetaId);
         verify(metaService, times(1)).save(any(FileMeta.class));
         verify(minioService, times(1)).uploadObject(any(FileMeta.class), eq(testBytes));
     }
