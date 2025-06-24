@@ -6,25 +6,21 @@ import { authAPI } from "../api/api";
 const AuthPage = () => {
     const [activeTab, setActiveTab] = useState('login');
     const [authData, setAuthData] = useState({ username: '', password: '' });
-    const [registerData, setRegisterData] = useState({ username: '', password: '' });
+    const [registerData, setRegisterData] = useState({ username: '', password: '', email: '', firstname: '', lastname: '' });
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleAuthSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = activeTab === 'login' ? await authAPI.login(authData) : await authAPI.register(registerData);
+            const responseData = activeTab === 'login'
+                ? await authAPI.login(authData)
+                : await authAPI.register(registerData);
 
-            if (!response.ok) {
-                throw new Error(await response.text());
-            }
-
-            const { token } = await response.json();
-            localStorage.setItem('jwtToken', token);
+            localStorage.setItem('jwtToken', responseData.token);
             navigate('/main');
         } catch (err) {
-            const errorMsg =  activeTab === 'login' ? 'Ошибка аутентификации' : 'Ошибка регистрации';
-            setError(errorMsg);
+            setError(err.message || 'Ошибка аутентификации');
         }
     };
 
@@ -47,10 +43,10 @@ const AuthPage = () => {
             {/* Auth Container */}
             <div className="flex flex-col md:flex-row gap-8 w-full max-w-4xl">
                 {/* Login Form */}
-                <div className={`flex-1 neumorphic-light dark:neumorphic-dark rounded-2xl p-8 relative z-10 transform transition-all hover:scale-[1.02] ${activeTab !== 'login' && 'opacity-80'}`}>
+                <div className={`flex-1 neumorphic-light dark:neumorphic-dark rounded-2xl p-8 relative z-10 transform transition-all duration-300 ${activeTab === 'login' ? 'scale-105 shadow-2xl' : 'scale-95 opacity-80'}`}>
                     <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-200">Вход</h2>
 
-                    <form onSubmit={handleAuthSubmit}>
+                    <form onSubmit={handleAuthSubmit} onClick={() => setActiveTab('login')}>
                         <div className="mb-4">
                             <label htmlFor="auth-username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Имя пользователя
@@ -96,10 +92,43 @@ const AuthPage = () => {
                 </div>
 
                 {/* Registration Form */}
-                <div className={`flex-1 neumorphic-light dark:neumorphic-dark rounded-2xl p-8 relative -ml-6 md:-ml-12 mt-6 md:mt-12 transform transition-all hover:scale-[1.02] ${activeTab !== 'register' && 'opacity-80'}`}>
+                <div className={`flex-1 neumorphic-light dark:neumorphic-dark rounded-2xl p-8 relative -ml-6 md:-ml-12 mt-6 md:mt-12 transform transition-all duration-300 ${activeTab === 'register' ? 'scale-105 shadow-2xl' : 'scale-95 opacity-80'}`}>
                     <h2 className="text-2xl font-bold mb-6 text-gray-800 dark:text-gray-200">Регистрация</h2>
 
-                    <form onSubmit={handleAuthSubmit}>
+                    <form onSubmit={handleAuthSubmit} onClick={() => setActiveTab('register')}>
+                        <div className="mb-4">
+                            <label htmlFor="reg-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                            <input
+                                type="email"
+                                id="reg-email"
+                                value={registerData.email}
+                                onChange={e => setRegisterData({ ...registerData, email: e.target.value })}
+                                className="w-full px-4 py-3 rounded-lg neumorphic-input-light dark:neumorphic-input-dark bg-secondary-light dark:bg-secondary-dark text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent-light dark:focus:ring-accent-dark transition-all"
+                                required
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="reg-firstname" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Имя</label>
+                            <input
+                                type="text"
+                                id="reg-firstname"
+                                value={registerData.firstname}
+                                onChange={e => setRegisterData({ ...registerData, firstname: e.target.value })}
+                                className="w-full px-4 py-3 rounded-lg neumorphic-input-light dark:neumorphic-input-dark bg-secondary-light dark:bg-secondary-dark text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent-light dark:focus:ring-accent-dark transition-all"
+                                required
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label htmlFor="reg-lastname" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Фамилия</label>
+                            <input
+                                type="text"
+                                id="reg-lastname"
+                                value={registerData.lastname}
+                                onChange={e => setRegisterData({ ...registerData, lastname: e.target.value })}
+                                className="w-full px-4 py-3 rounded-lg neumorphic-input-light dark:neumorphic-input-dark bg-secondary-light dark:bg-secondary-dark text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-accent-light dark:focus:ring-accent-dark transition-all"
+                                required
+                            />
+                        </div>
                         <div className="mb-4">
                             <label htmlFor="reg-username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                 Имя пользователя

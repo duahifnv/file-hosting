@@ -6,11 +6,11 @@
     <parent>
         <groupId>org.duahifnv</groupId>
         <artifactId>file-hosting</artifactId>
-        <version>0.0.1</version>
+        <version>0.9.0</version>
     </parent>
 
     <artifactId>file-hosting-api</artifactId>
-    <version>0.0.1</version>
+    <version>0.9.0</version>
 
     <name>File Hosting API</name>
     <description>Spring Boot API for file hosting</description>
