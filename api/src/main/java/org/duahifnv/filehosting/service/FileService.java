@@ -35,7 +35,7 @@ public class FileService {
         return Optional.of(new FileData(meta, fileBytes));
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public UUID uploadFile(MultipartFile file, User user) throws Exception {
         CryptoData cryptoData = cryptoService.encryptStream(file.getInputStream());
         FileMeta savedMeta = metaService.save(FileMeta.of(
@@ -43,19 +43,19 @@ public class FileService {
         );
 
         minioService.uploadObject(savedMeta, cryptoData.bytes());
-        metaService.save(savedMeta);
         return savedMeta.getId();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean removeFile(UUID id, User user) throws Exception {
         Optional<FileMeta> metaOptional = metaService.findById(id, user);
         if (metaOptional.isEmpty()) {
             return false;
         }
 
-        minioService.removeObject(metaOptional.get());
         metaService.remove(metaOptional.get());
+        minioService.removeObject(metaOptional.get());
+
         return true;
     }
 }
