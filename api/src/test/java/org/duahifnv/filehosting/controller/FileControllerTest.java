@@ -2,7 +2,9 @@ package org.duahifnv.filehosting.controller;
 
 import org.duahifnv.filehosting.dto.FileData;
 import org.duahifnv.filehosting.filter.AuthFilter;
+import org.duahifnv.filehosting.mapper.FileMetaMapper;
 import org.duahifnv.filehosting.model.FileMeta;
+import org.duahifnv.filehosting.service.FileMetaService;
 import org.duahifnv.filehosting.service.FileService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,12 @@ class FileControllerTest {
 
     @MockitoBean
     private FileService fileService;
+
+    @MockitoBean
+    private FileMetaService fileMetaService;
+
+    @MockitoBean
+    private FileMetaMapper fileMetaMapper;
 
     private final UUID fileId = UUID.fromString("f7624426-7c58-4826-b63b-8b34737807ee");
 

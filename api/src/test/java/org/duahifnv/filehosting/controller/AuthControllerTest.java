@@ -1,9 +1,8 @@
 package org.duahifnv.filehosting.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.duahifnv.filehosting.dto.AuthDto;
-import org.duahifnv.filehosting.dto.UserDto;
+import org.duahifnv.filehosting.dto.user.AuthDto;
+import org.duahifnv.filehosting.dto.user.RegisterDto;
 import org.duahifnv.filehosting.filter.AuthFilter;
 import org.duahifnv.filehosting.service.AuthService;
 import org.duahifnv.jwtauthstarter.jwt.JwtDto;
@@ -88,10 +87,12 @@ class AuthControllerTest {
     @Test
     void register_shouldReturnNewToken_withValidUserDto() throws Exception {
         // given
-        var userDto = new UserDto("john", "password");
+        var userDto = new RegisterDto("john", "password");
+        userDto.setEmail("user1@email.com");
+
         var jwtDto = new JwtDto("token");
 
-        when(authService.registerNewUser(any(UserDto.class)))
+        when(authService.registerNewUser(any(RegisterDto.class)))
                 .thenReturn(jwtDto);
         // then
         mvc.perform(post("/api/register")
@@ -101,6 +102,6 @@ class AuthControllerTest {
                 .andExpect(jsonPath("$.token").value("token"));
 
         // then
-        verify(authService).registerNewUser(any(UserDto.class));
+        verify(authService).registerNewUser(any(RegisterDto.class));
     }
 }

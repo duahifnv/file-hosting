@@ -2,12 +2,18 @@ CREATE TABLE users
 (
     id       UUID         NOT NULL,
     username VARCHAR(255) NOT NULL,
+    email    VARCHAR(255) NOT NULL,
+    firstname VARCHAR(255),
+    lastname VARCHAR(255),
     password VARCHAR(255) NOT NULL,
     CONSTRAINT pk_users PRIMARY KEY (id)
 );
 
 ALTER TABLE users
     ADD CONSTRAINT uc_users_username UNIQUE (username);
+
+ALTER TABLE users
+    ADD CONSTRAINT uc_users_email UNIQUE (email);
 
 CREATE TABLE file_metadata (
    id UUID PRIMARY KEY,
