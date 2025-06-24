@@ -1,24 +1,15 @@
 spring:
   config:
-      import: "file:.env[.properties]"
-
-  main:
-    allow-bean-definition-overriding: true
-
-  datasource:
-    url: jdbc:h2:mem:testdb
-    driver-class-name: org.h2.Driver
-    username:
-    password:
+    import: "file:.env[.properties]"
 
   jpa:
-    generate-ddl: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     show-sql: true
 
   flyway:
-    enabled: false
+    locations: classpath:db/migration, classpath:db/migration/dev
+    clean-disabled: false
 
 app:
   release-stage: development
@@ -31,6 +22,3 @@ logging:
 
 jwt:
   public-secret-key: QTE/eGAaVqV9dvnmTIjlvz07JyBBMB4dDaR9sp9T/OA=
-
-minio:
-  endpoint: http://localhost:${MINIO_PORT}
