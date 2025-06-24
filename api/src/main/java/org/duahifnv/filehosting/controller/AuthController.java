@@ -2,8 +2,8 @@ package org.duahifnv.filehosting.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.duahifnv.filehosting.dto.AuthDto;
-import org.duahifnv.filehosting.dto.UserDto;
+import org.duahifnv.filehosting.dto.user.AuthDto;
+import org.duahifnv.filehosting.dto.user.RegisterDto;
 import org.duahifnv.filehosting.service.AuthService;
 import org.duahifnv.jwtauthstarter.jwt.JwtDto;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class AuthController {
 
     @PostMapping("/api/register")
     @ResponseStatus(HttpStatus.CREATED)
-    public JwtDto register(@RequestBody @Valid UserDto userDto) {
-        return authService.registerNewUser(userDto);
+    public JwtDto register(@RequestBody @Valid RegisterDto registerDto) {
+        return authService.registerNewUser(registerDto);
     }
 }

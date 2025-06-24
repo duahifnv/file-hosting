@@ -1,11 +1,11 @@
-package org.duahifnv.filehosting.dto;
+package org.duahifnv.filehosting.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
-import org.duahifnv.jwtauthstarter.dto.AbstractUserDto;
+import org.duahifnv.jwtauthstarter.dto.AbstractAuthDto;
 import org.hibernate.validator.constraints.Length;
 
-public class UserDto extends AbstractUserDto {
-    public UserDto(String username, String password) {
+public class AuthDto extends AbstractAuthDto {
+    public AuthDto(String username, String password) {
         super(username, password);
     }
 
