@@ -2,8 +2,12 @@ package org.duahifnv.filehosting.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.duahifnv.exceptions.ResourceNotFoundException;
+import org.duahifnv.filehosting.dto.FileMetaDto;
+import org.duahifnv.filehosting.mapper.FileMetaMapper;
 import org.duahifnv.filehosting.model.User;
+import org.duahifnv.filehosting.service.FileMetaService;
 import org.duahifnv.filehosting.service.FileService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,18 +19,42 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
 public class FileController {
     private final FileService fileService;
+    private final FileMetaService metaService;
+    private final FileMetaMapper metaMapper;
 
-    @GetMapping("/api/files/{id}")
+    @GetMapping("/api/file-metas")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<byte[]> getFileById(@PathVariable UUID id, @AuthenticationPrincipal User user) {
+    public List<FileMetaDto> getAllFileMetas(@RequestParam(required = false) String contentType,
+                                             @AuthenticationPrincipal User user,
+                                             Pageable pageable) {
+        if (contentType != null) {
+            return metaMapper.toDtos(
+                    metaService.findAllByContentTypeAndUser(contentType, user, pageable)
+            );
+        }
+        return metaMapper.toDtos(metaService.findAllByUser(user, pageable));
+    }
+
+    @GetMapping("/api/file-metas/{metaId}")
+    @ResponseStatus(HttpStatus.OK)
+    public FileMetaDto getFileMeta(@PathVariable UUID metaId,
+                                @AuthenticationPrincipal User user) {
+        return metaMapper.toDto(metaService.findById(metaId, user)
+                .orElseThrow(ResourceNotFoundException::new));
+    }
+
+    @GetMapping("/api/files/{metaId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<byte[]> getFileById(@PathVariable UUID metaId, @AuthenticationPrincipal User user) {
         try {
-            return fileService.downloadFile(id, user)
+            return fileService.downloadFile(metaId, user)
                     .map(data -> ResponseEntity.ok()
                                         .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + data.metaData().getOriginalName() + "\"")
                                         .header(HttpHeaders.CONTENT_TYPE, data.metaData().getContentType())
@@ -54,11 +82,11 @@ public class FileController {
         }
     }
 
-    @DeleteMapping("/api/files/{id}")
+    @DeleteMapping("/api/files/{metaId}")
     @ResponseStatus(HttpStatus.OK)
-    public void removeFile(@PathVariable UUID id, @AuthenticationPrincipal User user) {
+    public void removeFile(@PathVariable UUID metaId, @AuthenticationPrincipal User user) {
         try {
-            if (!fileService.removeFile(id, user)) {
+            if (!fileService.removeFile(metaId, user)) {
                 throw new ResourceNotFoundException();
             }
         } catch (ResponseStatusException e) {
