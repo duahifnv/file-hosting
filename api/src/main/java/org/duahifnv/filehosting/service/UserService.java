@@ -3,7 +3,10 @@ package org.duahifnv.filehosting.service;
 import org.duahifnv.exceptions.UserAlreadyExistsException;
 import org.duahifnv.filehosting.model.User;
 import org.duahifnv.filehosting.repository.UserRepository;
+import org.duahifnv.jwtauthstarter.auth.AbstractAuthService;
 import org.duahifnv.jwtauthstarter.auth.AbstractUserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -15,6 +18,7 @@ import java.util.UUID;
 @Service
 public class UserService extends AbstractUserService<User, UUID> {
     private final UserRepository repository;
+    protected static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     public UserService(UserRepository userRepository) {
         super(userRepository);
@@ -37,5 +41,6 @@ public class UserService extends AbstractUserService<User, UUID> {
         });
 
         super.save(user);
+        log.debug("User: Пользователь [{}] обновлен", user.getUsername());
     }
 }
