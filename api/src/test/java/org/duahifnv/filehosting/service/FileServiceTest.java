@@ -76,6 +76,20 @@ class FileServiceTest {
     }
 
     @Test
+    void downloadSharedFile_shouldReturnSharedFile() throws Exception {
+        // given
+        var user = mock(User.class);
+        var fileMeta = mock(FileMeta.class);
+        when(metaService.findByIdShared(fileId, user)).thenReturn(Optional.of(fileMeta));
+
+        // when
+        fileService.downloadSharedFile(fileId, user);
+
+        // then
+        verify(metaService).findByIdShared(fileId, user);
+    }
+
+    @Test
     void uploadFile_shouldUploadToMinioAndSaveMeta() throws Exception {
         // given
         var file = mock(MultipartFile.class);

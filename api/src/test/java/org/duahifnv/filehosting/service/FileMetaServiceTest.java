@@ -1,6 +1,8 @@
 package org.duahifnv.filehosting.service;
 
 import org.duahifnv.filehosting.model.FileMeta;
+import org.duahifnv.filehosting.model.ShareMode;
+import org.duahifnv.filehosting.model.SharedMeta;
 import org.duahifnv.filehosting.model.User;
 import org.duahifnv.filehosting.repository.FileMetaRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +29,9 @@ class FileMetaServiceTest {
 
     @Mock
     private FileMetaRepository fileMetaRepository;
+
+    @Mock
+    private SharedMetaService sharedMetaService;
 
     @InjectMocks
     private FileMetaService fileMetaService;
@@ -87,6 +92,59 @@ class FileMetaServiceTest {
 
         assertThat(result).isEmpty();
         verify(fileMetaRepository).findById(testFileId);
+    }
+
+    @Test
+    void findByIdShared_ShouldReturnFileMeta_withLinkedSharing() {
+        // given
+        var sharedMeta = mock(SharedMeta.class);
+        when(sharedMeta.isExpired()).thenReturn(false);
+        when(sharedMeta.getShareMode()).thenReturn(ShareMode.LINKED);
+        when(sharedMeta.getMetadata()).thenReturn(testFileMeta);
+
+        when(sharedMetaService.findById(testFileId)).thenReturn(Optional.of(sharedMeta));
+
+        // when
+        var result = fileMetaService.findByIdShared(testFileId, testUser);
+
+        // then
+        assertThat(result).hasValue(testFileMeta);
+    }
+
+    @Test
+    void findByIdShared_ShouldReturnFileMeta_withSelectiveSharing() {
+        // given
+        var sharedMeta = mock(SharedMeta.class);
+        when(sharedMeta.isExpired()).thenReturn(false);
+        when(sharedMeta.getShareMode()).thenReturn(ShareMode.SELECTIVE);
+        when(sharedMeta.getMetadata()).thenReturn(testFileMeta);
+
+        var sharedUsers = List.of(testUser);
+        when(sharedMeta.getSharedUsers()).thenReturn(sharedUsers);
+
+        when(sharedMetaService.findById(testFileId)).thenReturn(Optional.of(sharedMeta));
+
+        // when
+        var result = fileMetaService.findByIdShared(testFileId, testUser);
+
+        // then
+        assertThat(result).hasValue(testFileMeta);
+    }
+
+    @Test
+    void findByIdShared_ShouldReturnFileMeta_withSelectiveSharing_withUserNotInSharing() {
+        // given
+        var sharedMeta = mock(SharedMeta.class);
+        when(sharedMeta.isExpired()).thenReturn(false);
+        when(sharedMeta.getShareMode()).thenReturn(ShareMode.SELECTIVE);
+
+        when(sharedMetaService.findById(testFileId)).thenReturn(Optional.of(sharedMeta));
+
+        // when
+        var result = fileMetaService.findByIdShared(testFileId, testUser);
+
+        // then
+        assertThat(result).isEmpty();
     }
 
     @Test
