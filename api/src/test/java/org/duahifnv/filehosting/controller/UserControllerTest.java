@@ -1,6 +1,7 @@
 package org.duahifnv.filehosting.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.duahifnv.filehosting.dto.user.UserBasicDto;
 import org.duahifnv.filehosting.dto.user.UserFormDto;
 import org.duahifnv.filehosting.filter.AuthFilter;
 import org.duahifnv.filehosting.mapper.UserMapper;
@@ -45,43 +46,42 @@ public class UserControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
-    @Disabled
     void getAllUsers_returnsAllUsers_paged() throws Exception {
         var users = List.of(
                 createUser("user1", "user1@email.com"),
                 createUser("user2", "user2@email.com")
         );
         var userDtos = List.of(
-                createUserInfoDto("user1@email.com"),
-                createUserInfoDto("user2@email.com")
+                createUserBasicDto("user1@email.com"),
+                createUserBasicDto("user2@email.com")
         );
         var pageNumber = 0;
         var pageSize = 3;
         var pageRequest = PageRequest.of(pageNumber, pageSize);
 
         when(userService.findAll(pageRequest)).thenReturn(users);
-        when(userMapper.toDtos(users)).thenReturn(userDtos);
+        when(userMapper.toBasicDtos(users)).thenReturn(userDtos);
 
         mvc.perform(get("/api/users")
                         .param("page", String.valueOf(pageNumber))
                         .param("size", String.valueOf(pageSize)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("users").isArray())
-                .andExpect(jsonPath("users[0].username").value("user1"));
+                .andExpect(jsonPath("users[0].email").value("user1@email.com"));
 
         verify(userService).findAll(eq(pageRequest));
-        verify(userMapper).toDtos(users);
+        verify(userMapper).toBasicDtos(users);
     }
 
     @Test
     void getUser_returnsUserByEmail() throws Exception {
         var email = "user1@email.com";
-        var userDto = createUserInfoDto(email);
+        var userDto = createUserBasicDto(email);
 
         var user = mock(User.class);
 
         when(userService.findByEmail(email)).thenReturn(Optional.of(user));
-        when(userMapper.toFormDto(user)).thenReturn(userDto);
+        when(userMapper.toBasicDto(user)).thenReturn(userDto);
 
         mvc.perform(get("/api/user").param("email", "user1@email.com"))
                 .andExpect(status().isOk())
@@ -97,9 +97,9 @@ public class UserControllerTest {
     }
 
     @Test
-    void getUser_returnsAuthenticatedUserForm() throws Exception {
+    void getUserForm_returnsUserForm() throws Exception {
         // given
-        var userDto = createUserInfoDto("user1@email.com");
+        var userDto = createFormDto("user1", "user1@email.com");
         when(userMapper.toFormDto(nullable(User.class))).thenReturn(userDto);
 
         // when
@@ -111,17 +111,19 @@ public class UserControllerTest {
     }
 
     @Test
-    @Disabled
     void updateUser_updatesUser() throws Exception {
-        var updatedUserDto = createUserInfoDto("user1@email.com");
+        // given
+        var userFormDto = createFormDto("user1", "user1@email.com");
 
+        // when
         mvc.perform(put("/api/user/me")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(updatedUserDto)))
+                        .content(objectMapper.writeValueAsString(userFormDto)))
                 .andExpect(status().isOk());
 
+        // then
         verify(userMapper).updateUser(nullable(User.class), any(UserFormDto.class));
-        verify(userService).save(nullable(User.class));
+        verify(userService).update(nullable(User.class));
     }
 
     private User createUser(String username, String email) {
@@ -134,7 +136,11 @@ public class UserControllerTest {
         return user;
     }
 
-    private UserFormDto createUserInfoDto(String email) {
-        return new UserFormDto(email, "First", "Last", "Password");
+    private UserBasicDto createUserBasicDto(String email) {
+        return new UserBasicDto(email, "First", "Last");
+    }
+
+    private UserFormDto createFormDto(String username, String email) {
+        return new UserFormDto(username, email, "First", "Last", "Password");
     }
 }

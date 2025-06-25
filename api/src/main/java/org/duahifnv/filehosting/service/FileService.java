@@ -20,9 +20,20 @@ public class FileService {
     private final FileCryptoService cryptoService;
     private final MinioService minioService;
     private final MinioProperties minioProperties;
+    private final FileMetaService fileMetaService;
 
-    public Optional<FileData> downloadFile(UUID id, User user) throws Exception {
-        var metaOptional = metaService.findById(id, user);
+    public Optional<FileData> downloadSharedFile(UUID fileId, User user) throws Exception {
+        Optional<FileMeta> sharedMetaOptional = fileMetaService.findByIdShared(fileId, user);
+        if (sharedMetaOptional.isEmpty()) {
+            return Optional.empty();
+        }
+
+        FileMeta fileMeta = sharedMetaOptional.get();
+        return downloadFile(fileMeta.getId(), fileMeta.getUser());
+    }
+
+    public Optional<FileData> downloadFile(UUID fileId, User user) throws Exception {
+        var metaOptional = metaService.findById(fileId, user);
         if (metaOptional.isEmpty()) {
             return Optional.empty();
         }
@@ -47,8 +58,8 @@ public class FileService {
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public boolean removeFile(UUID id, User user) throws Exception {
-        Optional<FileMeta> metaOptional = metaService.findById(id, user);
+    public boolean removeFile(UUID fileId, User user) throws Exception {
+        Optional<FileMeta> metaOptional = metaService.findById(fileId, user);
         if (metaOptional.isEmpty()) {
             return false;
         }

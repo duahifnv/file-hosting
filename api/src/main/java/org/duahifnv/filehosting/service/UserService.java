@@ -3,15 +3,14 @@ package org.duahifnv.filehosting.service;
 import org.duahifnv.exceptions.UserAlreadyExistsException;
 import org.duahifnv.filehosting.model.User;
 import org.duahifnv.filehosting.repository.UserRepository;
-import org.duahifnv.jwtauthstarter.auth.AbstractAuthService;
 import org.duahifnv.jwtauthstarter.auth.AbstractUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,6 +30,16 @@ public class UserService extends AbstractUserService<User, UUID> {
 
     public Optional<User> findByEmail(String email) {
         return repository.findByEmail(email);
+    }
+
+    public List<User> findUsersByEmails(List<String> userEmails) {
+        if (userEmails == null) {
+            return List.of();
+        }
+        return userEmails.stream()
+                .map(email -> findByEmail(email).orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     public void update(User user) {
