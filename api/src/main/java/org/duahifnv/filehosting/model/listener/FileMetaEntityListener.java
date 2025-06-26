@@ -12,9 +12,11 @@ import java.time.*;
 @RequiredArgsConstructor
 public class FileMetaEntityListener {
     private final Clock clock;
+    // todo: Добавить валидацию
     @Value("${file.lifetime}")
     public Duration fileLifetime;
 
+    // todo: @PostLoad для валидации на истекший файл
     @PrePersist
     public void setFileMeta(FileMeta fileMeta) {
         OffsetDateTime dateTime = OffsetDateTime.ofInstant(

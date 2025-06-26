@@ -34,8 +34,8 @@ public class SharedMeta {
     private ShareMode shareMode;
 
     @NotNull
-    @Column(name = "shared_at", nullable = false)
-    private OffsetDateTime sharedAt;
+    @Column(name = "created_at", nullable = false)
+    private OffsetDateTime createdAt;
 
     @Column(name = "expires_at")
     private OffsetDateTime expiresAt;
