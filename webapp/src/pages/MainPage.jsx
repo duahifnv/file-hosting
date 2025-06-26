@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fileAPI } from '../api/api';
+import ShareModal from '../components/ShareModal';
 
 const sortOptions = [
     { value: 'originalName', label: 'Имя файла' },
@@ -40,6 +41,9 @@ const MainPage = () => {
     const [modalImg, setModalImg] = useState(null);
     const [contentType, setContentType] = useState('');
     const [showDropdown, setShowDropdown] = useState(false);
+    const [activeTab, setActiveTab] = useState('my-files');
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
     const navigate = useNavigate();
 
     const handleAuthError = (e) => {
@@ -53,8 +57,14 @@ const MainPage = () => {
         setLoading(true);
         setError('');
         try {
-            const data = await fileAPI.getAllFileMetas({ page, size, sort: `${sort},${order}`, contentType });
-            setFileMetas(data);
+            const data = await fileAPI.getAllFileMetas({
+                page,
+                size,
+                sort: `${sort},${order}`,
+                contentType,
+                shared: activeTab === 'shared-files'
+            });
+            setFileMetas(data.fileMetas || []);
         } catch (e) {
             handleAuthError(e);
             setError(e.message);
@@ -68,8 +78,7 @@ const MainPage = () => {
             return;
         }
         fetchMetas();
-        // eslint-disable-next-line
-    }, [page, sort, order, contentType]);
+    }, [page, sort, order, contentType, activeTab]);
 
     const handleFilePick = async (e) => {
         if (!e.target.files[0]) return;
@@ -89,7 +98,11 @@ const MainPage = () => {
         setLoading(true);
         setError('');
         try {
-            await fileAPI.removeFile(metaId);
+            if (activeTab === 'shared-files') {
+                await fileAPI.removeShare(metaId);
+            } else {
+                await fileAPI.removeFile(metaId);
+            }
             fetchMetas();
         } catch (e) {
             handleAuthError(e);
@@ -98,10 +111,23 @@ const MainPage = () => {
         setLoading(false);
     };
 
+    const handleShare = (file) => {
+        setSelectedFile(file);
+        setShowShareModal(true);
+    };
+
+    const handleShareCreated = () => {
+        setShowShareModal(false);
+        setSelectedFile(null);
+        if (activeTab === 'shared-files') {
+            fetchMetas();
+        }
+    };
+
     const handleDoubleClick = async (meta) => {
         if (meta.contentType?.startsWith('image/')) {
             try {
-                const res = await fileAPI.getFileById(meta.id);
+                const res = await fileAPI.getFileById(meta.id, activeTab === 'shared-files');
                 const blob = await res.blob();
                 setModalImg(URL.createObjectURL(blob));
                 setShowModal(true);
@@ -111,7 +137,7 @@ const MainPage = () => {
             }
         } else {
             try {
-                const res = await fileAPI.getFileById(meta.id);
+                const res = await fileAPI.getFileById(meta.id, activeTab === 'shared-files');
                 const blob = await res.blob();
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -148,6 +174,28 @@ const MainPage = () => {
             <div className="w-full max-w-4xl flex flex-col gap-6">
                 <div className="flex flex-wrap gap-4 items-center justify-between mb-2">
                     <div className="flex gap-2 items-center">
+                        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-lg p-1">
+                            <button
+                                onClick={() => setActiveTab('my-files')}
+                                className={`px-4 py-2 rounded-md transition-colors ${
+                                    activeTab === 'my-files'
+                                        ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-gray-200 shadow-sm'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                                }`}
+                            >
+                                Мои файлы
+                            </button>
+                            <button
+                                onClick={() => setActiveTab('shared-files')}
+                                className={`px-4 py-2 rounded-md transition-colors ${
+                                    activeTab === 'shared-files'
+                                        ? 'bg-white dark:bg-gray-600 text-gray-800 dark:text-gray-200 shadow-sm'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                                }`}
+                            >
+                                Общие файлы
+                            </button>
+                        </div>
                         <select className="px-3 py-2 rounded-lg neumorphic-input-light dark:neumorphic-input-dark bg-secondary-light dark:bg-secondary-dark text-gray-800 dark:text-gray-200" value={sort} onChange={e => setSort(e.target.value)}>
                             {sortOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                         </select>
@@ -157,10 +205,12 @@ const MainPage = () => {
                         </select>
                         <input type="text" placeholder="contentType..." className="px-3 py-2 rounded-lg neumorphic-input-light dark:neumorphic-input-dark bg-secondary-light dark:bg-secondary-dark text-gray-800 dark:text-gray-200" value={contentType} onChange={e => setContentType(e.target.value)} />
                     </div>
-                    <label className="bg-accent-light dark:bg-accent-dark text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity shadow-md cursor-pointer">
-                        Добавить файл
-                        <input type="file" className="hidden" onChange={handleFilePick} />
-                    </label>
+                    {activeTab === 'my-files' && (
+                        <label className="bg-accent-light dark:bg-accent-dark text-white py-2 px-4 rounded-lg font-medium hover:opacity-90 transition-opacity shadow-md cursor-pointer">
+                            Добавить файл
+                            <input type="file" className="hidden" onChange={handleFilePick} />
+                        </label>
+                    )}
                 </div>
                 <div className="neumorphic-light dark:neumorphic-dark rounded-2xl p-6 min-h-[300px] flex flex-col gap-4 transition-all">
                     {loading && <div className="text-center animate-pulse text-lg">Загрузка...</div>}
@@ -182,10 +232,22 @@ const MainPage = () => {
                                     <span>Истекает: {meta.expiresAt ? new Date(meta.expiresAt).toLocaleString() : '-'}</span>
                                 </div>
                             </div>
-                            <button
-                                className="ml-2 px-3 py-1 bg-red-500 text-white rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                                onClick={e => { e.stopPropagation(); handleDelete(meta.id); }}
-                            >Удалить</button>
+                            <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                {activeTab === 'my-files' && (
+                                    <button
+                                        className="px-3 py-1 bg-blue-500 text-white rounded-lg"
+                                        onClick={e => { e.stopPropagation(); handleShare(meta); }}
+                                    >
+                                        Поделиться
+                                    </button>
+                                )}
+                                <button
+                                    className="px-3 py-1 bg-red-500 text-white rounded-lg"
+                                    onClick={e => { e.stopPropagation(); handleDelete(meta.id); }}
+                                >
+                                    {activeTab === 'shared-files' ? 'Удалить ссылку' : 'Удалить'}
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
@@ -210,6 +272,16 @@ const MainPage = () => {
                         <button className="mt-4 px-4 py-2 bg-accent-light dark:bg-accent-dark text-white rounded-lg" onClick={() => setShowModal(false)}>Закрыть</button>
                     </div>
                 </div>
+            )}
+            {showShareModal && selectedFile && (
+                <ShareModal
+                    file={selectedFile}
+                    onClose={() => {
+                        setShowShareModal(false);
+                        setSelectedFile(null);
+                    }}
+                    onShareCreated={handleShareCreated}
+                />
             )}
         </div>
     );

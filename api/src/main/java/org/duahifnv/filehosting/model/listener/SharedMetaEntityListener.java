@@ -17,11 +17,11 @@ public class SharedMetaEntityListener {
 
     @PrePersist
     public void setSharedLifetime(SharedMeta sharedMeta) {
-        sharedMeta.setSharedAt(OffsetDateTime.now(clock));
+        sharedMeta.setCreatedAt(OffsetDateTime.now(clock));
         Duration sharedDuration = sharedMeta.getSharedDuration();
 
         if (sharedDuration != null) {
-            sharedMeta.setExpiresAt(sharedMeta.getSharedAt().plus(sharedDuration));
+            sharedMeta.setExpiresAt(sharedMeta.getCreatedAt().plus(sharedDuration));
         }
     }
 
