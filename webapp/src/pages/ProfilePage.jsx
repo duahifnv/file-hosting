@@ -134,7 +134,7 @@ const ProfilePage = () => {
                 {error && <div className="text-center text-red-500">{error}</div>}
                 <div className="flex flex-col gap-4">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Имя пользователя</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Логин</label>
                         <input
                             type="text"
                             value={form.username}

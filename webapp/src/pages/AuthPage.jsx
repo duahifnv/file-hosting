@@ -49,7 +49,7 @@ const AuthPage = () => {
                     <form onSubmit={handleAuthSubmit} onClick={() => setActiveTab('login')}>
                         <div className="mb-4">
                             <label htmlFor="auth-username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Имя пользователя
+                                Логин
                             </label>
                             <input
                                 type="text"
@@ -131,7 +131,7 @@ const AuthPage = () => {
                         </div>
                         <div className="mb-4">
                             <label htmlFor="reg-username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                                Имя пользователя
+                                Логин
                             </label>
                             <input
                                 type="text"

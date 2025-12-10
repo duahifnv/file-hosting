@@ -1,5 +1,13 @@
 package org.duahifnv.filehosting.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.duahifnv.exceptions.ResourceNotFoundException;
 import org.duahifnv.filehosting.dto.FileMetaDto;
@@ -25,6 +33,8 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Управление файлами", description = "API для загрузки, скачивания и управления файлами")
+@SecurityRequirement(name = "JWT аутентификация")
 public class FileController {
     private final FileService fileService;
     private final FileMetaService metaService;
@@ -32,10 +42,17 @@ public class FileController {
 
     @GetMapping("/api/file-metas")
     @ResponseStatus(HttpStatus.OK)
-    public FileMetasDto getAllFileMetas(@RequestParam(required = false) String contentType,
-                                                          @AuthenticationPrincipal User user,
-                                                          @RequestParam(required = false) boolean shared,
-                                                          Pageable pageable) {
+    @Operation(summary = "Получить список метаданных файлов", description = "Возвращает список метаданных файлов пользователя с возможностью фильтрации по типу контента и общим файлам")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Список метаданных успешно получен",
+                    content = @Content(schema = @Schema(implementation = FileMetasDto.class))),
+            @ApiResponse(responseCode = "401", description = "Не авторизован")
+    })
+    public FileMetasDto getAllFileMetas(
+            @Parameter(description = "Тип контента для фильтрации") @RequestParam(required = false) String contentType,
+            @Parameter(hidden = true) @AuthenticationPrincipal User user,
+            @Parameter(description = "Получить только общие файлы") @RequestParam(required = false) boolean shared,
+            @Parameter(description = "Параметры пагинации") Pageable pageable) {
         List<FileMeta> fileMetas;
         if (shared)
             fileMetas = metaService.findAllShared(user, pageable);
@@ -48,8 +65,17 @@ public class FileController {
 
     @GetMapping("/api/file-metas/{fileId}")
     @ResponseStatus(HttpStatus.OK)
-    public FileMetaDto getFileMeta(@PathVariable UUID fileId, @AuthenticationPrincipal User user,
-                                   @RequestParam(required = false) boolean shared) {
+    @Operation(summary = "Получить метаданные файла", description = "Возвращает метаданные конкретного файла")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Метаданные успешно получены",
+                    content = @Content(schema = @Schema(implementation = FileMetaDto.class))),
+            @ApiResponse(responseCode = "404", description = "Файл не найден"),
+            @ApiResponse(responseCode = "401", description = "Не авторизован")
+    })
+    public FileMetaDto getFileMeta(
+            @Parameter(description = "Идентификатор файла", required = true) @PathVariable UUID fileId,
+            @Parameter(hidden = true) @AuthenticationPrincipal User user,
+            @Parameter(description = "Получить из общих файлов") @RequestParam(required = false) boolean shared) {
         var fileMeta = shared ?
                 metaService.findByIdShared(fileId, user) :
                 metaService.findById(fileId, user);
@@ -59,8 +85,18 @@ public class FileController {
 
     @GetMapping("/api/files/{fileId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<byte[]> getFileById(@PathVariable UUID fileId, @AuthenticationPrincipal User user,
-                                              @RequestParam(required = false) boolean shared) {
+    @Operation(summary = "Скачать файл", description = "Скачивает файл по его идентификатору")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Файл успешно скачан",
+                    content = @Content(mediaType = "application/octet-stream")),
+            @ApiResponse(responseCode = "404", description = "Файл не найден"),
+            @ApiResponse(responseCode = "401", description = "Не авторизован"),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
+    })
+    public ResponseEntity<byte[]> getFileById(
+            @Parameter(description = "Идентификатор файла", required = true) @PathVariable UUID fileId,
+            @Parameter(hidden = true) @AuthenticationPrincipal User user,
+            @Parameter(description = "Скачать из общих файлов") @RequestParam(required = false) boolean shared) {
         try {
             var fileData = shared ?
                     fileService.downloadSharedFile(fileId, user) :
@@ -81,7 +117,16 @@ public class FileController {
 
     @PostMapping(path = "/api/files", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file, @AuthenticationPrincipal User user) {
+    @Operation(summary = "Загрузить файл", description = "Загружает новый файл в систему")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Файл успешно загружен"),
+            @ApiResponse(responseCode = "401", description = "Не авторизован"),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
+    })
+    public ResponseEntity<?> uploadFile(
+            @Parameter(description = "Файл для загрузки", required = true, content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
+            @RequestPart("file") MultipartFile file,
+            @Parameter(hidden = true) @AuthenticationPrincipal User user) {
         try {
             UUID fileId = fileService.uploadFile(file, user);
             return ResponseEntity
@@ -95,7 +140,16 @@ public class FileController {
 
     @DeleteMapping("/api/files/{fileId}")
     @ResponseStatus(HttpStatus.OK)
-    public void removeFile(@PathVariable UUID fileId, @AuthenticationPrincipal User user) {
+    @Operation(summary = "Удалить файл", description = "Удаляет файл по его идентификатору")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Файл успешно удален"),
+            @ApiResponse(responseCode = "404", description = "Файл не найден"),
+            @ApiResponse(responseCode = "401", description = "Не авторизован"),
+            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
+    })
+    public void removeFile(
+            @Parameter(description = "Идентификатор файла", required = true) @PathVariable UUID fileId,
+            @Parameter(hidden = true) @AuthenticationPrincipal User user) {
         try {
             if (!fileService.removeFile(fileId, user)) {
                 throw new ResourceNotFoundException();
