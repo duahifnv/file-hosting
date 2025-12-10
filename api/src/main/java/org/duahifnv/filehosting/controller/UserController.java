@@ -17,7 +17,6 @@ import org.duahifnv.filehosting.dto.user.UsersBasicDto;
 import org.duahifnv.filehosting.mapper.UserMapper;
 import org.duahifnv.filehosting.model.User;
 import org.duahifnv.filehosting.service.UserService;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -38,11 +37,8 @@ public class UserController {
                     content = @Content(schema = @Schema(implementation = UsersBasicDto.class))),
             @ApiResponse(responseCode = "401", description = "Не авторизован")
     })
-    public UsersBasicDto getAllUsers(
-            @Parameter(description = "Параметры пагинации") Pageable pageable) {
-        return new UsersBasicDto(
-                userMapper.toBasicDtos(userService.findAll(pageable))
-        );
+    public UsersBasicDto getAllUsers() {
+        return new UsersBasicDto(userMapper.toBasicDtos(userService.findAll()));
     }
 
     @GetMapping("/api/user")

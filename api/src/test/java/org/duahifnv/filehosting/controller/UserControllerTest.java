@@ -55,21 +55,16 @@ public class UserControllerTest {
                 createUserBasicDto("user1@email.com"),
                 createUserBasicDto("user2@email.com")
         );
-        var pageNumber = 0;
-        var pageSize = 3;
-        var pageRequest = PageRequest.of(pageNumber, pageSize);
 
-        when(userService.findAll(pageRequest)).thenReturn(users);
+        when(userService.findAll()).thenReturn(users);
         when(userMapper.toBasicDtos(users)).thenReturn(userDtos);
 
-        mvc.perform(get("/api/users")
-                        .param("page", String.valueOf(pageNumber))
-                        .param("size", String.valueOf(pageSize)))
+        mvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("users").isArray())
                 .andExpect(jsonPath("users[0].email").value("user1@email.com"));
 
-        verify(userService).findAll(eq(pageRequest));
+        verify(userService).findAll();
         verify(userMapper).toBasicDtos(users);
     }
 

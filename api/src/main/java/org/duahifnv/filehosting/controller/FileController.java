@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.duahifnv.exceptions.ResourceNotFoundException;
 import org.duahifnv.filehosting.dto.FileMetaDto;
 import org.duahifnv.filehosting.dto.FileMetasDto;
+import org.duahifnv.filehosting.dto.pageable.FilePageableDto;
 import org.duahifnv.filehosting.mapper.FileMetaMapper;
 import org.duahifnv.filehosting.model.FileMeta;
 import org.duahifnv.filehosting.model.User;
@@ -52,8 +53,10 @@ public class FileController {
             @Parameter(description = "Тип контента для фильтрации") @RequestParam(required = false) String contentType,
             @Parameter(hidden = true) @AuthenticationPrincipal User user,
             @Parameter(description = "Получить только общие файлы") @RequestParam(required = false) boolean shared,
-            @Parameter(description = "Параметры пагинации") Pageable pageable) {
+            @Parameter(description = "Параметры пагинации") FilePageableDto page) {
         List<FileMeta> fileMetas;
+        Pageable pageable = page.pageable();
+
         if (shared)
             fileMetas = metaService.findAllShared(user, pageable);
         else if (contentType != null)
@@ -70,7 +73,8 @@ public class FileController {
             @ApiResponse(responseCode = "200", description = "Метаданные успешно получены",
                     content = @Content(schema = @Schema(implementation = FileMetaDto.class))),
             @ApiResponse(responseCode = "404", description = "Файл не найден"),
-            @ApiResponse(responseCode = "401", description = "Не авторизован")
+            @ApiResponse(responseCode = "401", description = "Не авторизован"),
+            @ApiResponse(responseCode = "410", description = "Срок действия файла истек")
     })
     public FileMetaDto getFileMeta(
             @Parameter(description = "Идентификатор файла", required = true) @PathVariable UUID fileId,
@@ -93,7 +97,7 @@ public class FileController {
             @ApiResponse(responseCode = "401", description = "Не авторизован"),
             @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера")
     })
-    public ResponseEntity<byte[]> getFileById(
+    public ResponseEntity<?> getFileById(
             @Parameter(description = "Идентификатор файла", required = true) @PathVariable UUID fileId,
             @Parameter(hidden = true) @AuthenticationPrincipal User user,
             @Parameter(description = "Скачать из общих файлов") @RequestParam(required = false) boolean shared) {

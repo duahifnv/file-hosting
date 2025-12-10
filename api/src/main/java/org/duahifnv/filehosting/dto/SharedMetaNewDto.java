@@ -10,7 +10,7 @@ import java.util.List;
 
 @Schema(description = "DTO для создания общего доступа к файлу")
 public record SharedMetaNewDto(
-        @Schema(description = "Список email адресов пользователей, которым предоставляется доступ", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"user1@example.com\", \"user2@example.com\"]")
+        @Schema(description = "Список email адресов пользователей, которым предоставляется доступ", requiredMode = Schema.RequiredMode.REQUIRED, example = "[\"user1@mail.ru\", \"user2@mail.ru\"]")
         @NotNull(message = "Список email адресов не может быть null")
         @NotEmpty(message = "Список email адресов не может быть пустым")
         List<@Email(message = "Некорректный формат email") String> sharedUsersEmails,

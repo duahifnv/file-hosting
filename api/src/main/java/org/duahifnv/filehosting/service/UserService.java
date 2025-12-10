@@ -24,8 +24,8 @@ public class UserService extends AbstractUserService<User, UUID> {
         repository = userRepository;
     }
 
-    public List<User> findAll(Pageable pageable) {
-        return repository.findAll(pageable).stream().toList();
+    public List<User> findAll() {
+        return repository.findAll().stream().toList();
     }
 
     public Optional<User> findByEmail(String email) {
