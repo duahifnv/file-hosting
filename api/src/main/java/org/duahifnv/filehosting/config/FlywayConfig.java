@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration(proxyBeanMethods = false)
 public class FlywayConfig {
     @Bean
-    @Profile("dev")
+    @Profile("clean-db")
     public FlywayMigrationStrategy cleanMigrateStrategy() {
         return flyway -> {
             flyway.clean();
