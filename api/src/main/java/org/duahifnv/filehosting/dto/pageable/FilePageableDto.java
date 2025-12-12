@@ -11,14 +11,8 @@ public record FilePageableDto(@Min(value = 0, message = "Номер страни
                               @Schema(description = "Размер страницы", minimum = "1", example = "10")
                               Integer size,
                               @Schema(description = "Параметр для сортировки элементов")
-                              FileSort sort,
+                              String sortParam,
                               @Schema(description = "Направление сортировки элементов", allowableValues = {"ASC", "DESC"})
                               Sort.Direction sortDirection)
         implements PageableDto {
-    public enum FileSort { originalName, contentType, originalSize, createdAt, expiresAt }
-
-    @Override
-    public String sortParam() {
-        return sort != null ? sort.name() : null;
-    }
 }

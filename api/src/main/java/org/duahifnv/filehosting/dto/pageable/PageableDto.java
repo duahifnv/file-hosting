@@ -11,7 +11,9 @@ public interface PageableDto {
     Sort.Direction sortDirection();
 
     default Pageable pageable() {
-        var direction = sortDirection() != null ? sortDirection() : Sort.Direction.ASC;
-        return PageRequest.of(page(), size(), direction, sortParam());
+        var page = page() != null ? page() : 0;
+        var size = size() != null ? size() : 5;
+        Sort sort = sortDirection() == null || sortParam() == null ? Sort.unsorted() : Sort.by(sortDirection(), sortParam());
+        return PageRequest.of(page, size, sort);
     }
 }

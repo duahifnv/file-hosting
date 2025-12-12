@@ -53,7 +53,7 @@ public class FileController {
             @Parameter(description = "Тип контента для фильтрации") @RequestParam(required = false) String contentType,
             @Parameter(hidden = true) @AuthenticationPrincipal User user,
             @Parameter(description = "Получить только общие файлы") @RequestParam(required = false) boolean shared,
-            @Parameter(description = "Параметры пагинации") FilePageableDto page) {
+            @Parameter(description = "Параметры пагинации") @ModelAttribute FilePageableDto page) {
         List<FileMeta> fileMetas;
         Pageable pageable = page.pageable();
 

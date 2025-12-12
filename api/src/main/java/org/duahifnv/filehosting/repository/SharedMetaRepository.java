@@ -9,10 +9,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
 public interface SharedMetaRepository extends JpaRepository<SharedMeta, UUID> {
+
+    @Query("SELECT sf FROM SharedMeta sf " +
+            "JOIN FileMeta fm ON sf.metadata = fm " +
+            "WHERE fm = :fileMeta")
+    List<SharedMeta> findSharedMetasByFileMeta(FileMeta fileMeta);
 
     @Query("SELECT sf FROM SharedMeta sf " +
             "JOIN FileMeta fm ON sf.metadata = fm " +

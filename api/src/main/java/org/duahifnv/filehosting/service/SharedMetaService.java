@@ -33,8 +33,8 @@ public class SharedMetaService {
         return repository.findById(sharedId);
     }
 
-    public List<SharedMeta> findSharedMetas(FileMeta fileMeta, Pageable pageable) {
-        return repository.findSharedMetasByFileMeta(fileMeta, pageable).stream().toList();
+    public List<SharedMeta> findSharedMetas(FileMeta fileMeta) {
+        return repository.findSharedMetasByFileMeta(fileMeta);
     }
 
     @Transactional
@@ -55,7 +55,7 @@ public class SharedMetaService {
 
     @Transactional
     public void removeSharedMetas(FileMeta fileMeta) {
-        List<SharedMeta> sharedMetas = findSharedMetas(fileMeta, Pageable.unpaged());
+        List<SharedMeta> sharedMetas = findSharedMetas(fileMeta);
         repository.deleteAll(sharedMetas);
     }
 }
