@@ -14,9 +14,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import org.duahifnv.filehosting.mobile.data.TokenStore
 import org.duahifnv.filehosting.mobile.data.models.RegisterDto
 import org.duahifnv.filehosting.mobile.data.models.UserFormDto
-import org.duahifnv.filehosting.mobile.ui.theme.NeomorphicButton
-import org.duahifnv.filehosting.mobile.ui.theme.NeomorphicCard
-import org.duahifnv.filehosting.mobile.ui.theme.NeomorphicTextField
 import org.duahifnv.filehosting.mobile.ui.viewmodel.AuthViewModel
 
 @Composable
@@ -60,7 +57,7 @@ fun AuthScreen(viewModel: AuthViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        NeomorphicCard(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)
@@ -78,44 +75,44 @@ fun AuthScreen(viewModel: AuthViewModel) {
                     fontWeight = FontWeight.Bold
                 )
 
-                NeomorphicTextField(
+                TextField(
                     value = username,
                     onValueChange = { username = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Имя пользователя"
+                    placeholder = { Text("Имя пользователя") }
                 )
 
                 if (!isLogin) {
-                    NeomorphicTextField(
+                    TextField(
                         value = email,
                         onValueChange = { email = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = "Email"
+                        placeholder = { Text("Email") }
                     )
 
-                    NeomorphicTextField(
+                    TextField(
                         value = firstname,
                         onValueChange = { firstname = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = "Имя"
+                        placeholder = { Text("Имя") }
                     )
 
-                    NeomorphicTextField(
+                    TextField(
                         value = lastname,
                         onValueChange = { lastname = it },
                         modifier = Modifier.fillMaxWidth(),
-                        placeholder = "Фамилия"
+                        placeholder = { Text("Фамилия") }
                     )
                 }
 
-                NeomorphicTextField(
+                TextField(
                     value = password,
                     onValueChange = { password = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Пароль"
+                    placeholder = { Text("Пароль") }
                 )
 
-                NeomorphicButton(
+                Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         if (isLogin) {
@@ -175,7 +172,7 @@ fun EditProfileScreen(viewModel: AuthViewModel, initialUserForm: UserFormDto) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        NeomorphicCard(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)
@@ -201,35 +198,35 @@ fun EditProfileScreen(viewModel: AuthViewModel, initialUserForm: UserFormDto) {
                     )
                 }
 
-                NeomorphicTextField(
+                TextField(
                     value = email,
                     onValueChange = { email = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Email"
+                    placeholder = { Text("Email") }
                 )
 
-                NeomorphicTextField(
+                TextField(
                     value = firstname,
                     onValueChange = { firstname = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Имя"
+                    placeholder = { Text("Имя") }
                 )
 
-                NeomorphicTextField(
+                TextField(
                     value = lastname,
                     onValueChange = { lastname = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Фамилия"
+                    placeholder = { Text("Фамилия") }
                 )
 
-                NeomorphicTextField(
+                TextField(
                     value = password,
                     onValueChange = { password = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Новый пароль (оставьте пустым, чтобы не менять)"
+                    placeholder = { Text("Новый пароль (оставьте пустым, чтобы не менять)") }
                 )
 
-                NeomorphicButton(
+                Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         viewModel.updateUser(
@@ -248,7 +245,7 @@ fun EditProfileScreen(viewModel: AuthViewModel, initialUserForm: UserFormDto) {
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                NeomorphicButton(
+                Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = { viewModel.logout() }
                 ) {

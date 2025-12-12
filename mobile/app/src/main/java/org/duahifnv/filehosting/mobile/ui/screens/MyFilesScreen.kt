@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -21,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -40,9 +43,6 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import org.duahifnv.filehosting.mobile.data.models.FileMetaDto
-import org.duahifnv.filehosting.mobile.ui.theme.NeomorphicButton
-import org.duahifnv.filehosting.mobile.ui.theme.NeomorphicCard
-import org.duahifnv.filehosting.mobile.ui.theme.NeomorphicTextField
 import org.duahifnv.filehosting.mobile.ui.utils.formatDate
 import org.duahifnv.filehosting.mobile.ui.utils.formatFileSize
 import org.duahifnv.filehosting.mobile.ui.viewmodel.FilesViewModel
@@ -149,7 +149,7 @@ fun FilesTab(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         if (!isShared) {
-            NeomorphicCard(
+            Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
@@ -164,7 +164,7 @@ fun FilesTab(
                         fontWeight = FontWeight.Bold
                     )
 
-                    NeomorphicButton(
+                    Button(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             filePickerLauncher.launch("*/*")
@@ -176,7 +176,7 @@ fun FilesTab(
             }
         }
 
-        NeomorphicCard(
+        Card(
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(
@@ -191,11 +191,11 @@ fun FilesTab(
                     fontWeight = FontWeight.Bold
                 )
 
-                NeomorphicTextField(
+                TextField(
                     value = contentTypeFilter,
                     onValueChange = { contentTypeFilter = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Тип контента (например, image/png)"
+                    placeholder = { Text("Тип контента (например, image/png)") }
                 )
 
                 Row(
@@ -210,13 +210,13 @@ fun FilesTab(
                             expanded = expandedSort,
                             onExpandedChange = { expandedSort = !expandedSort }
                         ) {
-                            NeomorphicTextField(
+                            TextField(
                                 value = sortBy ?: "Без сортировки",
                                 onValueChange = {},
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .menuAnchor(),
-                                placeholder = "Сортировка",
+                                placeholder = { Text("Сортировка") },
                                 enabled = false
                             )
                             ExposedDropdownMenu(
@@ -248,13 +248,13 @@ fun FilesTab(
                             expanded = expandedDirection,
                             onExpandedChange = { expandedDirection = !expandedDirection }
                         ) {
-                            NeomorphicTextField(
+                            TextField(
                                 value = sortDirection ?: "ASC",
                                 onValueChange = {},
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .menuAnchor(),
-                                placeholder = "Направление",
+                                placeholder = { Text("Направление") },
                                 enabled = false
                             )
                             ExposedDropdownMenu(
@@ -276,7 +276,7 @@ fun FilesTab(
                     }
                 }
 
-                NeomorphicButton(
+                Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         if (isShared) {
@@ -342,7 +342,7 @@ fun FileItem(
     onDelete: () -> Unit,
     isShared: Boolean
 ) {
-    NeomorphicCard(
+    Card(
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -380,7 +380,7 @@ fun FileItem(
             }
 
             if (!isShared) {
-                NeomorphicButton(
+                Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = onDelete
                 ) {

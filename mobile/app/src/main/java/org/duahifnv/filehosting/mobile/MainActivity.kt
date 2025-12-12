@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -65,7 +65,7 @@ fun MainScreen(tokenStore: TokenStore) {
                     selected = selectedTab == 1,
                     onClick = { if (isAuthenticated) selectedTab = 1 },
                     enabled = isAuthenticated,
-                    icon = { Icon(Icons.Filled.Favorite, contentDescription = "Мои файлы") },
+                    icon = { Icon(Icons.Filled.Info, contentDescription = "Мои файлы") },
                     label = { Text("Мои файлы") }
                 )
                 NavigationBarItem(

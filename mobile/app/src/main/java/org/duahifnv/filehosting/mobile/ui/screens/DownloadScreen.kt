@@ -18,9 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.duahifnv.filehosting.mobile.ui.theme.NeomorphicButton
-import org.duahifnv.filehosting.mobile.ui.theme.NeomorphicCard
-import org.duahifnv.filehosting.mobile.ui.theme.NeomorphicTextField
 import org.duahifnv.filehosting.mobile.ui.utils.formatDate
 import org.duahifnv.filehosting.mobile.ui.utils.formatFileSize
 import org.duahifnv.filehosting.mobile.ui.viewmodel.DownloadViewModel
@@ -71,7 +68,7 @@ fun DownloadScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        NeomorphicCard(
+        Card(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 20.dp)
@@ -89,11 +86,11 @@ fun DownloadScreen(
                     fontWeight = FontWeight.Bold
                 )
 
-                NeomorphicTextField(
+                TextField(
                     value = fileId,
                     onValueChange = { fileId = it },
                     modifier = Modifier.fillMaxWidth(),
-                    placeholder = "Введите ID файла (UUID)",
+                    placeholder = { Text("Введите ID файла (UUID)") },
                     enabled = !loading
                 )
 
@@ -109,7 +106,7 @@ fun DownloadScreen(
                     Text("Из общих файлов")
                 }
 
-                NeomorphicButton(
+                Button(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         if (fileId.isNotBlank()) {
@@ -136,7 +133,7 @@ fun DownloadScreen(
         }
 
         fileMeta?.let { meta ->
-            NeomorphicCard(
+            Card(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column(
@@ -163,7 +160,7 @@ fun DownloadScreen(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     if (fileData == null) {
-                        NeomorphicButton(
+                        Button(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 viewModel.downloadFile(fileId, isShared)
@@ -183,7 +180,7 @@ fun DownloadScreen(
                             }
                         }
                     } else {
-                        NeomorphicButton(
+                        Button(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
