@@ -13,6 +13,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   minio:
     image: minio/minio:latest
@@ -29,6 +31,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    volumes:
+      - minio_data:/data
 
   miniomc:
     container_name: file-hosting-miniomc
@@ -48,3 +52,26 @@ services:
       echo 'MinIO initialization complete';
       tail -f /dev/null
       "
+
+  api:
+    container_name: file-hosting-api
+    image: file-hosting-api:latest
+    env_file:
+      - .env
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    environment:
+      SPRING_CONFIG_LOCATION: /config/application.yml
+    volumes:
+      - ./api/src/main/resources/application.yml:/config/application.yml
+      - ./settings.xml.template:/app/settings.xml.template:ro
+    depends_on:
+      - postgres-db
+      - minio
+    ports:
+      - ${API_PORT}:8080
+
+volumes:
+  postgres_data:
+  minio_data:

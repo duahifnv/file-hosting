@@ -57,7 +57,6 @@ class SharedMetaRepositoryTest {
         var sharedMeta = new SharedMeta();
         sharedMeta.setMetadata(fileMeta);
         sharedMeta.setShareMode(ShareMode.SELECTIVE);
-        sharedMeta.setSharedAt(OffsetDateTime.now(clock));
         sharedMeta.setSharedUsers(List.of(user));
         entityManager.persist(sharedMeta);
         entityManager.flush();
@@ -100,7 +99,6 @@ class SharedMetaRepositoryTest {
         var sharedMeta = new SharedMeta();
         sharedMeta.setMetadata(fileMeta);
         sharedMeta.setShareMode(ShareMode.SELECTIVE);
-        sharedMeta.setSharedAt(OffsetDateTime.now());
         sharedMeta.setSharedUsers(List.of(owner));
         entityManager.persist(sharedMeta);
         entityManager.flush();

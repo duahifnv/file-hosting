@@ -25,6 +25,6 @@ CREATE TABLE file_metadata (
    object_path VARCHAR(500) NOT NULL,
    encryption_key BYTEA NOT NULL,
    iv BYTEA NOT NULL,
-   created_at TIMESTAMPTZ NOT NULL,
-   expires_at TIMESTAMPTZ
+   created_at TIMESTAMP NOT NULL,
+   expires_at TIMESTAMP
 );

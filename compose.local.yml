@@ -1,0 +1,9 @@
+services:
+  api:
+    volumes:
+      - ./api/src:/app/src
+      - ./api/pom.xml:/app/pom.xml
+      - maven_data:/root/.m2/repository
+
+volumes:
+  maven_data:

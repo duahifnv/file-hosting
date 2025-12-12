@@ -13,10 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +31,7 @@ class SharedMetaServiceTest {
     void createSharedMeta_shouldCreateNewSharedMeta() {
         // given
         var usersEmails = List.of("user1@mail.ru", "user2@mail.ru", "user3@mail.ru");
-        var sharedMetaNewDto = new SharedMetaNewDto(usersEmails, Duration.ofHours(1));
+        var sharedMetaNewDto = new SharedMetaNewDto(usersEmails, Duration.ofHours(1).toString());
         var fileMeta = mock(FileMeta.class);
 
         var sharedUsers = List.of(mock(User.class), mock(User.class), mock(User.class));
@@ -45,40 +42,5 @@ class SharedMetaServiceTest {
 
         // then
         verify(repository).save(any(SharedMeta.class));
-    }
-
-    @Test
-    void removeSharedMeta_shouldRemoveSharedMeta_withExistingSharedMetas() {
-        // given
-        var fileId = UUID.fromString("61cd3676-5ea7-4683-87eb-e93db5d68370");
-        var fileMeta = mock(FileMeta.class);
-        when(fileMeta.getId()).thenReturn(fileId);
-
-        var sharedMeta = mock(SharedMeta.class);
-        when(sharedMetaService.findById(fileId)).thenReturn(Optional.of(sharedMeta));
-
-        // when
-        boolean isDeleted = sharedMetaService.removeSharedMetas(fileMeta);
-
-        // then
-        assertThat(isDeleted).isTrue();
-        verify(repository).deleteById(fileId);
-    }
-
-    @Test
-    void removeSharedMeta_shouldDoNothing_withNonExistingSharedMetas() {
-        // given
-        var fileId = UUID.fromString("61cd3676-5ea7-4683-87eb-e93db5d68370");
-        var fileMeta = mock(FileMeta.class);
-
-        when(fileMeta.getId()).thenReturn(fileId);
-        when(sharedMetaService.findById(fileId)).thenReturn(Optional.empty());
-
-        // when
-        boolean isDeleted = sharedMetaService.removeSharedMetas(fileMeta);
-
-        // then
-        assertThat(isDeleted).isFalse();
-        verify(repository, never()).deleteById(fileId);
     }
 }

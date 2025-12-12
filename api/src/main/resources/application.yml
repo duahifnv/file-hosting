@@ -1,6 +1,9 @@
 spring:
   application:
-    name: ${app.name} - ${app.version} - ${app.release-stage}
+    name: ${app.name} - ${app.version}
+
+  config:
+    import: optional:file:.env[.properties]
 
   servlet:
     multipart:
@@ -16,11 +19,11 @@ server:
     include-message: always
 
 jwt:
-  public-secret-key: ${JWT_SECRET}
+  public-secret-key: ${JWT_SECRET:QTE/eGAaVqV9dvnmTIjlvz07JyBBMB4dDaR9sp9T/OA=}
   token-lifetime: 86400s # 24 часа
 
 minio:
-  endpoint-uri: http://${MINIO_HOST:localhost}:${MINIO_PORT}
+  endpoint-uri: http://${MINIO_HOST}:${MINIO_PORT}
   access-key: ${MINIO_ROOT_USER}
   secret-key: ${MINIO_ROOT_PASSWORD}
   init-bucket-name: ${MINIO_INIT_BUCKET}
@@ -33,3 +36,10 @@ springdoc:
 
 file:
   lifetime: 30m
+
+logging:
+  level:
+    root: INFO
+    org.duahifnv.filehosting: DEBUG
+    org.duahifnv.jwtauthstarter: DEBUG
+    org.duahifnv.errorwebhandlerstarter: DEBUG
